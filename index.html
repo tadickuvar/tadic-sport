@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TADIĆ.SPORT — Prodaja i Lager</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:#1e293b;background:#eef2f8}
+.shell{display:flex;min-height:100vh}
+.nav{width:210px;flex-shrink:0;background:#1e3a5f;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50}
+.nav-brand{padding:14px 14px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.nav-brand-text p:first-child{color:#fff;font-size:13px;font-weight:600;letter-spacing:.5px}
+.nav-brand-text p:last-child{color:#7ab3d4;font-size:10px;margin-top:1px}
+.nsep{height:1px;background:rgba(255,255,255,.07);margin:6px 12px}
+.na{display:flex;align-items:center;gap:8px;padding:9px 14px;color:#7ab3d4;font-size:12.5px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.na:hover{color:#c8ddf5;background:rgba(255,255,255,.05)}
+.na.on{color:#fff;background:rgba(96,165,250,.2);border-left-color:#60a5fa}
+.na i{font-size:15px;flex-shrink:0}
+.nsave{margin-top:auto;padding:10px 14px;color:#3d6a8a;font-size:10.5px;text-align:center;border-top:1px solid rgba(255,255,255,.05);line-height:1.6}
+.main{flex:1;display:flex;flex-direction:column;margin-left:210px}
+.topbar{background:#fff;border-bottom:1px solid #dde6f5;padding:0 20px;display:flex;align-items:center;height:54px;flex-shrink:0;position:sticky;top:0;z-index:40}
+.tb-title{font-size:14px;font-weight:600;color:#1e3a5f}
+.tb-sub{font-size:11.5px;color:#7a9cc4;margin-left:4px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-date{font-size:11.5px;color:#7a9cc4;background:#eef2f8;padding:4px 10px;border-radius:20px}
+.sync-badge{font-size:11px;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;font-weight:500;transition:all .4s}
+.sync-ok{background:#d1fae5;color:#065f46}
+.sync-saving{background:#fef9c3;color:#854d0e}
+.sync-err{background:#fee2e2;color:#9f1239}
+.sync-loading{background:#dbeafe;color:#1d4ed8}
+.content{flex:1;padding:18px;display:flex;flex-direction:column;gap:14px}
+.page{display:none;flex-direction:column;gap:14px}
+.page.on{display:flex}
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.mc{border-radius:16px;padding:14px 15px;border:1.5px solid transparent}
+.mc-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px}
+.mc-lbl{font-size:11px;margin-bottom:3px}
+.mc-val{font-size:19px;font-weight:600;line-height:1}
+.mc-sub{font-size:10.5px;margin-top:3px}
+.mc-blue{background:#dbeafe;border-color:#93c5fd}.mc-blue .mc-icon{background:#2563eb;color:#fff}.mc-blue .mc-lbl{color:#1d4ed8}.mc-blue .mc-val{color:#1e3a8a}.mc-blue .mc-sub{color:#3b82f6}
+.mc-sky{background:#e0f2fe;border-color:#7dd3fc}.mc-sky .mc-icon{background:#0284c7;color:#fff}.mc-sky .mc-lbl{color:#075985}.mc-sky .mc-val{color:#0c4a6e}.mc-sky .mc-sub{color:#0284c7}
+.mc-mint{background:#d1fae5;border-color:#6ee7b7}.mc-mint .mc-icon{background:#10b981;color:#fff}.mc-mint .mc-lbl{color:#065f46}.mc-mint .mc-val{color:#064e3b}.mc-mint .mc-sub{color:#10b981}
+.mc-gold{background:#fef9c3;border-color:#fde047}.mc-gold .mc-icon{background:#ca8a04;color:#fff}.mc-gold .mc-lbl{color:#854d0e}.mc-gold .mc-val{color:#713f12}.mc-gold .mc-sub{color:#ca8a04}
+.mc-rose{background:#ffe4e6;border-color:#fca5a5}.mc-rose .mc-icon{background:#f43f5e;color:#fff}.mc-rose .mc-lbl{color:#9f1239}.mc-rose .mc-val{color:#881337}.mc-rose .mc-sub{color:#f43f5e}
+.mc-amber{background:#fef3c7;border-color:#fcd34d}.mc-amber .mc-icon{background:#f59e0b;color:#fff}.mc-amber .mc-lbl{color:#92400e}.mc-amber .mc-val{color:#78350f}.mc-amber .mc-sub{color:#f59e0b}
+.card{background:#fff;border-radius:18px;border:1.5px solid #dde6f5;overflow:hidden}
+.ch{padding:12px 16px;border-bottom:1.5px solid #edf2fc;display:flex;align-items:center;justify-content:space-between;background:#f8faff}
+.ch-t{font-size:13px;font-weight:500;color:#1e3a5f;display:flex;align-items:center;gap:7px}
+.ch-t i{font-size:15px;color:#3b82f6}
+table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+th{padding:9px 13px;text-align:left;font-size:11px;font-weight:500;color:#7a9cc4;background:#f8faff;border-bottom:1.5px solid #edf2fc;white-space:nowrap}
+td{padding:9px 13px;border-bottom:1px solid #eef2fb;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even) td{background:#f8faff}
+tbody tr:hover td{background:#eef4ff}
+.r{text-align:right}.c{text-align:center}.fw{font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.b-ok{background:#d1fae5;color:#065f46}.b-sent{background:#fef9c3;color:#854d0e}.b-paid{background:#dbeafe;color:#1d4ed8}
+.b-gray{background:#f1f5f9;color:#475569}.b-red{background:#fee2e2;color:#9f1239}.b-blue{background:#dbeafe;color:#1d4ed8}
+.b-slate{background:#e2e8f0;color:#334155}.b-new{background:#ede9fe;color:#4c1d95}.b-changed{background:#fef9c3;color:#854d0e;font-size:10.5px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:500;color:#7a9cc4;text-transform:uppercase;letter-spacing:.04em}
+.fg input,.fg select{height:36px;padding:0 10px;border:1.5px solid #dde6f5;border-radius:12px;background:#f8faff;color:#1e293b;font-size:13px;width:100%}
+.fg input:focus,.fg select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.btn{padding:8px 16px;border-radius:12px;border:1.5px solid #dde6f5;cursor:pointer;font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;gap:6px;background:#fff;color:#1e293b;transition:all .15s}
+.btn:hover{background:#eef4ff;border-color:#93c5fd}
+.btn-p{background:#2563eb;color:#fff;border-color:#2563eb}.btn-p:hover{background:#1d4ed8}
+.btn-g{background:#10b981;color:#fff;border-color:#10b981}.btn-g:hover{background:#059669}
+.btn-gold{background:#ca8a04;color:#fff;border-color:#ca8a04}.btn-gold:hover{background:#a16207}
+.btn-v{background:#7c3aed;color:#fff;border-color:#7c3aed}.btn-v:hover{background:#6d28d9}
+.btn-d{background:#fee2e2;color:#9f1239;border-color:#fca5a5;padding:4px 9px;font-size:11px;border-radius:9px}
+.btn-sm{padding:4px 9px;font-size:11px;border-radius:9px}
+.pitem{display:grid;grid-template-columns:1fr 72px 115px;gap:8px;align-items:center;padding:9px 12px;background:#f8faff;border-radius:14px;margin-bottom:6px;border:1.5px solid #dde6f5}
+.pitem select,.pitem input{height:34px;padding:0 8px;border:1.5px solid #dde6f5;border-radius:10px;background:#fff;color:#1e293b;font-size:12.5px}
+.pbox{background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:13px 15px}
+.pr{display:flex;justify-content:space-between;font-size:12.5px;color:#1d4ed8;padding:3px 0}
+.pt{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:#1e3a8a;border-top:1.5px solid #93c5fd;padding-top:9px;margin-top:6px}
+.msg{padding:9px 13px;border-radius:12px;font-size:12.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.msg-ok{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.msg-err{background:#fee2e2;color:#9f1239;border:1px solid #fca5a5}
+.msg-info{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+.li-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;padding:14px}
+.li{border-radius:14px;padding:12px 13px;border:1.5px solid transparent}
+.li-ok{background:#d1fae5;border-color:#6ee7b7}.li-warn{background:#fef9c3;border-color:#fde047}.li-zero{background:#fee2e2;border-color:#fca5a5}
+.li-name{font-size:11.5px;font-weight:500;margin-bottom:4px}
+.li-ok .li-name{color:#065f46}.li-warn .li-name{color:#854d0e}.li-zero .li-name{color:#9f1239}
+.li-kol{font-size:21px;font-weight:600;line-height:1.1}
+.li-ok .li-kol{color:#064e3b}.li-warn .li-kol{color:#78350f}.li-zero .li-kol{color:#881337}
+.li-bot{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:11px}
+.li-ok .li-bot{color:#10b981}.li-warn .li-bot{color:#f59e0b}.li-zero .li-bot{color:#f43f5e}
+.ftotal{background:#f0f6ff;padding:10px 15px;border-top:1.5px solid #dde6f5;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:#1d4ed8}
+.ftotal strong{font-size:14px;font-weight:600;color:#1e3a8a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rk1{background:#fbbf24;color:#78350f;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.rk2{background:#d1d5db;color:#374151;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.rk3{background:#fb923c;color:#7c2d12;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.rkn{background:#e2e8f0;color:#475569;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.price-hist-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;margin-bottom:4px;background:#f8faff;border:1.5px solid #dde6f5;font-size:12px}
+.price-hist-row.current{background:#d1fae5;border-color:#6ee7b7}
+.edit-modal{background:#fff;border:2px solid #bfdbfe;border-radius:18px;padding:18px;margin-bottom:14px}
+.novi-artikal-form{background:#f5f3ff;border:2px solid #c4b5fd;border-radius:18px;padding:18px}
+@media(max-width:768px){
+  .nav{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
+  .main{margin-left:0}
+  .two-col{grid-template-columns:1fr}
+  .pitem{grid-template-columns:1fr 60px 90px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="nav">
+  <div class="nav-brand">
+    <svg viewBox="0 0 48 48" width="38" height="38" style="flex-shrink:0">
+      <circle cx="24" cy="24" r="23" fill="#fff" stroke="#e8b84b" stroke-width="2.5"/>
+      <text x="24" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="#c9991a" font-family="Georgia,serif" letter-spacing="0.3">TADIĆ</text>
+      <line x1="8" y1="25" x2="40" y2="25" stroke="#e8b84b" stroke-width="1.2"/>
+      <text x="24" y="35" text-anchor="middle" font-size="6.5" font-weight="600" fill="#1e3a5f" font-family="sans-serif" letter-spacing="2">SPORT</text>
+    </svg>
+    <div class="nav-brand-text"><p>TADIĆ.SPORT</p><p>Cloud sinhronizacija</p></div>
+  </div>
+  <div class="nsep"></div>
+  <button class="na on" onclick="go('prodaja',this)"><i class="ti ti-shopping-cart"></i> Nova prodaja</button>
+  <button class="na" onclick="go('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Pregled</button>
+  <button class="na" onclick="go('lager',this)"><i class="ti ti-box"></i> Lager</button>
+  <button class="na" onclick="go('nabavka',this)"><i class="ti ti-truck-delivery"></i> Nabavka</button>
+  <button class="na" onclick="go('istorija',this)"><i class="ti ti-receipt-2"></i> Istorija</button>
+  <button class="na" onclick="go('analitika',this)"><i class="ti ti-chart-bar"></i> Analitika</button>
+  <div class="nsep"></div>
+  <button class="na" onclick="go('artikli',this)"><i class="ti ti-circle-plus"></i> Dodaj artikal</button>
+  <button class="na" onclick="go('cene',this)"><i class="ti ti-tag"></i> Upravljanje cenama</button>
+  <button class="na" onclick="go('cenovnik',this)"><i class="ti ti-table"></i> Cenovnik</button>
+  <div class="nsave">
+    <i class="ti ti-brand-google"></i><br>
+    Podaci na Google Sheets<br>
+    <button onclick="syncNow()" style="margin-top:6px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:10px;cursor:pointer;width:100%">
+      <i class="ti ti-refresh"></i> Osveži podatke
+    </button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div><span class="tb-title" id="pg-t">Nova prodaja</span><span class="tb-sub" id="pg-s">Evidentiraj novu prodaju</span></div>
+    <div class="tb-right">
+      <div class="sync-badge sync-loading" id="sync-badge"><i class="ti ti-loader"></i> <span id="sync-txt">Učitavanje...</span></div>
+      <div class="tb-date" id="tdate"></div>
+      <svg viewBox="0 0 48 48" width="38" height="38" style="border-radius:50%;border:2px solid #e8b84b;flex-shrink:0">
+        <circle cx="24" cy="24" r="24" fill="#fff"/>
+        <text x="24" y="21" text-anchor="middle" font-size="9" font-weight="700" fill="#c9991a" font-family="Georgia,serif" letter-spacing="0.3">TADIĆ</text>
+        <line x1="8" y1="25" x2="40" y2="25" stroke="#e8b84b" stroke-width="1.2"/>
+        <text x="24" y="35" text-anchor="middle" font-size="6.5" font-weight="600" fill="#1e3a5f" font-family="sans-serif" letter-spacing="2">SPORT</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="page on" id="p-prodaja">
+      <div class="card" style="padding:18px">
+        <div id="pm"></div>
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="fg"><label>Datum slanja</label><input type="date" id="p-d"></div>
+          <div class="fg"><label>Kupac</label><input type="text" id="p-i" placeholder="Ime i prezime"></div>
+          <div class="fg"><label>Mesto</label><input type="text" id="p-m" placeholder="Grad / mesto"></div>
+          <div class="fg"><label>Dostava</label>
+            <select id="p-dostava"><option>BEX</option><option>Pošta Srbije</option><option>D Express</option><option>DHL</option><option>Lično</option><option>Ostalo</option></select>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:500;color:#7a9cc4;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Proizvodi</div>
+        <div id="p-items"></div>
+        <div class="form-row" style="margin-top:12px">
+          <div class="fg"><label>Popust (%)</label><input type="number" id="p-pop" value="0" min="0" max="100" oninput="updPrev()"></div>
+          <div class="fg"><label>Trošak slanja (din)</label><input type="number" id="p-postarina" value="0" min="0" oninput="updPrev()"></div>
+          <div class="fg"><label>Ostali rashodi (din)</label><input type="number" id="p-rashod" value="0" min="0" oninput="updPrev()"></div>
+        </div>
+        <div id="p-prev" style="display:none;margin-top:12px"></div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="saveProd('Poslato')"><i class="ti ti-send"></i> Evidentiraj kao Poslato</button>
+          <button class="btn btn-g" onclick="saveProd('Uplaćeno')"><i class="ti ti-check"></i> Odmah Uplaćeno</button>
+          <button class="btn" onclick="initProd()"><i class="ti ti-refresh"></i> Poništi</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="p-dashboard">
+      <div class="mg" id="d-mg"></div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-clock"></i> Poslato — čeka uplatu</div><span id="d-cek-badge" class="badge b-sent"></span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Datum</th><th>Kupac</th><th>Mesto</th><th>Dostava</th><th class="r">Iznos</th><th class="r">Rashodi</th><th class="c" style="width:170px">Akcija</th></tr></thead>
+          <tbody id="d-cek-tbody"></tbody>
+        </table></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-box"></i> Stanje lagera</div></div>
+          <div class="li-grid" id="d-lg"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-trophy"></i> Top 5 po prihodu</div></div>
+          <div id="d-top" style="padding:12px 14px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="p-lager">
+      <div class="mg" id="l-mg"></div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-package"></i> Lager lista</div><span id="l-badge" class="badge b-blue"></span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th style="width:32%">Proizvod</th><th class="c" style="width:11%">Kom</th><th class="r" style="width:18%">Vrednost</th><th class="r" style="width:16%">Nab. cena</th><th class="r" style="width:15%">Prod. cena</th><th class="c" style="width:8%">Status</th></tr></thead>
+          <tbody id="l-tbody"></tbody>
+        </table></div>
+        <div class="ftotal"><span>Ukupna vrednost lagera:</span><strong id="l-tot"></strong></div>
+      </div>
+    </div>
+
+    <div class="page" id="p-nabavka">
+      <div class="card" style="padding:16px">
+        <div style="font-size:13px;font-weight:500;color:#1e3a5f;margin-bottom:14px;display:flex;align-items:center;gap:7px"><i class="ti ti-circle-plus" style="color:#10b981;font-size:16px"></i> Dodaj nabavku</div>
+        <div id="nm"></div>
+        <div class="form-row">
+          <div class="fg" style="grid-column:span 2"><label>Proizvod</label><select id="n-pr" onchange="setNC()"><option value="">— Izaberi —</option></select></div>
+          <div class="fg"><label>Količina</label><input type="number" id="n-kl" min="1" value="1"></div>
+          <div class="fg"><label>Nabavna cena (din/kom)</label><input type="number" id="n-ce" min="0" value="0"></div>
+          <div class="fg"><label>Datum</label><input type="date" id="n-dt"></div>
+          <div class="fg" style="justify-content:flex-end"><button class="btn btn-g" onclick="saveNab()"><i class="ti ti-circle-plus"></i> Dodaj na lager</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-history"></i> Istorija nabavki</div><span id="n-badge" class="badge b-gray"></span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Datum</th><th>Proizvod</th><th class="r">Kol.</th><th class="r">Cena/kom</th><th class="r">Ukupno</th><th class="c">Del.</th></tr></thead>
+          <tbody id="n-tbody"></tbody>
+        </table></div>
+        <div class="ftotal"><span>Ukupno nabavljeno:</span><strong id="n-tot" style="color:#0c4a6e"></strong></div>
+      </div>
+    </div>
+
+    <div class="page" id="p-istorija">
+      <div id="ist-edit-wrap"></div>
+      <div class="mg" id="ist-mg"></div>
+      <div class="card">
+        <div class="ch">
+          <div class="ch-t"><i class="ti ti-receipt-2"></i> Sve prodaje</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <select id="ist-f" onchange="rIst()" style="height:28px;padding:0 8px;border:1.5px solid #dde6f5;border-radius:10px;background:#f8faff;color:#1e293b;font-size:12px">
+              <option value="">Svi statusi</option><option>Poslato</option><option>Primljeno</option><option>Uplaćeno</option>
+            </select>
+            <span id="ist-badge" class="badge b-blue"></span>
+          </div>
+        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr>
+            <th style="width:4%">#</th><th style="width:8%">Datum</th><th style="width:12%">Kupac</th>
+            <th style="width:8%">Mesto</th><th style="width:7%">Dostava</th><th style="width:20%">Proizvodi</th>
+            <th class="r" style="width:9%">Iznos</th><th class="r" style="width:8%">Rashodi</th>
+            <th class="r" style="width:9%">Zarada</th><th class="c" style="width:15%">Status / Akcija</th>
+          </tr></thead>
+          <tbody id="ist-tbody"></tbody>
+        </table></div>
+        <div class="ftotal">
+          <span>Samo naplaćene:</span>
+          <div style="display:flex;gap:20px">
+            <span>Prihod: <strong id="ist-prihod" style="color:#1e3a8a"></strong></span>
+            <span>Zarada: <strong id="ist-zarada" style="color:#064e3b"></strong></span>
+            <span>Rashodi: <strong id="ist-rashodi" style="color:#9f1239"></strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="p-analitika">
+      <div class="mg" id="an-mg"></div>
+      <div class="two-col">
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-trophy"></i> Rang lista — top proizvodi</div></div>
+          <div id="an-rang" style="padding:12px 14px;display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-chart-donut"></i> Udeo u prihodima</div></div>
+          <div style="padding:10px 14px 4px;display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:#7a9cc4" id="an-legend"></div>
+          <div style="position:relative;height:220px;padding:6px 14px 14px"><canvas id="an-pie"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-table"></i> Detaljna tabela po proizvodu</div></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr>
+            <th style="width:4%">#</th><th style="width:22%">Proizvod</th>
+            <th class="r" style="width:8%">Kom</th><th class="r" style="width:12%">Prihod</th>
+            <th class="r" style="width:11%">Nab.tr.</th><th class="r" style="width:11%">Pak.tr.</th>
+            <th class="r" style="width:11%">Zarada</th><th class="r" style="width:9%">Marža</th>
+            <th class="c" style="width:12%">Bar</th>
+          </tr></thead>
+          <tbody id="an-tbody"></tbody>
+        </table></div>
+        <div class="ftotal"><span>Ukupno (naplaćeno)</span>
+          <div style="display:flex;gap:20px">
+            <span>Prihod: <strong id="an-tot-p" style="color:#1e3a8a"></strong></span>
+            <span>Zarada: <strong id="an-tot-z" style="color:#064e3b"></strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-calendar-stats"></i> Prihod po danima</div></div>
+        <div style="position:relative;height:180px;padding:10px 14px 14px"><canvas id="an-bar"></canvas></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-users"></i> Top kupci</div></div>
+          <div style="overflow-x:auto"><table>
+            <thead><tr><th class="c" style="width:12%">#</th><th>Kupac</th><th>Mesto</th><th class="r">Br.</th><th class="r">Ukupno</th></tr></thead>
+            <tbody id="an-kupci"></tbody>
+          </table></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-t"><i class="ti ti-map-pin"></i> Prodaja po mestima</div></div>
+          <div style="overflow-x:auto"><table>
+            <thead><tr><th class="c" style="width:12%">#</th><th>Mesto</th><th class="r">Prodaja</th><th class="r">Vrednost</th><th class="r">Udeo</th></tr></thead>
+            <tbody id="an-mesta"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="p-artikli">
+      <div class="novi-artikal-form">
+        <div style="font-size:13px;font-weight:500;color:#4c1d95;display:flex;align-items:center;gap:8px;margin-bottom:16px"><i class="ti ti-circle-plus"></i> Dodaj novi artikal u sistem</div>
+        <div id="art-msg"></div>
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="fg" style="grid-column:span 2"><label>Naziv artikla</label><input type="text" id="art-ime" placeholder="npr. Trenerka, Kačket..."></div>
+          <div class="fg"><label>Nabavna cena (din)</label><input type="number" id="art-nab" min="0" placeholder="npr. 800"></div>
+          <div class="fg"><label>Prodajna cena (din)</label><input type="number" id="art-prod" min="0" placeholder="npr. 2500"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:16px">
+          <div class="fg"><label>Kutija (din/kom)</label><input type="number" id="art-kutija" min="0" value="0"></div>
+          <div class="fg"><label>Papir (din/kom)</label><input type="number" id="art-papir" min="0" value="0"></div>
+          <div class="fg"><label>Boja (din/kom)</label><input type="number" id="art-boja" min="0" value="0"></div>
+        </div>
+        <button class="btn btn-v" onclick="dodajArtikal()"><i class="ti ti-circle-plus"></i> Dodaj artikal u sistem</button>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="ch"><div class="ch-t"><i class="ti ti-list"></i> Svi artikli u sistemu</div><span id="art-count" class="badge b-blue"></span></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th style="width:28%">Naziv</th><th class="r">Nab.</th><th class="r">Prod.</th><th class="r">Kutija</th><th class="r">Papir</th><th class="r">Boja</th><th class="r">Profit/kom</th><th class="c">Na lageru</th></tr></thead>
+          <tbody id="art-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="page" id="p-cene">
+      <div class="card" style="padding:16px">
+        <div style="font-size:13px;font-weight:500;color:#1e3a5f;margin-bottom:14px;display:flex;align-items:center;gap:7px"><i class="ti ti-tag" style="color:#2563eb;font-size:16px"></i> Promeni cenu proizvoda</div>
+        <div id="cene-msg"></div>
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="fg" style="grid-column:span 2"><label>Proizvod</label><select id="ce-pr" onchange="loadCeneHist()"><option value="">— Izaberi —</option></select></div>
+          <div class="fg"><label>Datum primene</label><input type="date" id="ce-dt"></div>
+        </div>
+        <div id="ce-current" style="display:none;margin-bottom:14px"></div>
+        <div class="form-row" style="margin-bottom:12px">
+          <div class="fg"><label>Nova prodajna cena (din)</label><input type="number" id="ce-prod" min="0" placeholder="npr. 2800"></div>
+          <div class="fg"><label>Nova nabavna cena (din)</label><input type="number" id="ce-nab" min="0" placeholder="npr. 650"></div>
+        </div>
+        <button class="btn btn-p" onclick="saveCena()"><i class="ti ti-device-floppy"></i> Sačuvaj promenu cene</button>
+      </div>
+      <div class="card" id="ce-hist-card" style="display:none">
+        <div class="ch"><div class="ch-t"><i class="ti ti-history"></i> Istorija cena — <span id="ce-hist-title"></span></div></div>
+        <div id="ce-hist" style="padding:12px 14px"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-list"></i> Sve promene cena</div></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr><th>Datum</th><th>Proizvod</th><th class="r">Prod. cena</th><th class="r">Nab. cena</th><th class="c">Del.</th></tr></thead>
+          <tbody id="ce-all-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="page" id="p-cenovnik">
+      <div class="card">
+        <div class="ch"><div class="ch-t"><i class="ti ti-table"></i> Cenovnik — aktuelne cene</div></div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr>
+            <th style="width:22%">Proizvod</th><th class="r">Nab.</th><th class="r">Prod.</th>
+            <th class="r">Kutija</th><th class="r">Papir</th><th class="r">Boja</th>
+            <th class="r">Profit/kom</th><th class="r">Marža</th><th class="c">Kom</th>
+          </tr></thead>
+          <tbody id="cn-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+const GS_URL='https://script.google.com/macros/s/AKfycbzBgb9vdlqq4YaOj0qMXPxIJ-vk_oxddu2jgzXtjs3kVpkZtWXt_MMzZ4beqC-RQnZL/exec';
+
+const BASE_DEF=[
+  {ime:'Kostobran 8cm',n:600,p:2500,k:25,pa:17.5,b:15},
+  {ime:'Kostobran 10cm',n:600,p:2500,k:25,pa:17.5,b:15},
+  {ime:'Kostobran 12cm',n:600,p:2500,k:25,pa:17.5,b:15},
+  {ime:'Kostobran 14cm',n:600,p:2500,k:25,pa:35,b:15},
+  {ime:'Kostobran 16cm',n:600,p:2500,k:25,pa:35,b:15},
+  {ime:'Kostobran 19cm',n:600,p:2500,k:25,pa:35,b:15},
+  {ime:'Držač S',n:200,p:800,k:0,pa:17.5,b:10},
+  {ime:'Držač M',n:200,p:800,k:0,pa:17.5,b:10},
+  {ime:'Držač L',n:200,p:800,k:0,pa:17.5,b:10},
+  {ime:'Flaša 700ml',n:480,p:1800,k:0,pa:35,b:15},
+  {ime:'Termos 500ml',n:890,p:2500,k:0,pa:35,b:15},
+  {ime:'Šolja',n:90,p:450,k:0,pa:17.5,b:10},
+  {ime:'Kapetanska traka',n:400,p:1500,k:0,pa:0,b:0},
+  {ime:'Čarape',n:110,p:400,k:0,pa:0,b:0},
+  {ime:'Štucne',n:150,p:700,k:0,pa:0,b:0},
+  {ime:'Magnet',n:50,p:250,k:0,pa:8.75,b:5},
+  {ime:'Podloga fi20',n:150,p:500,k:0,pa:35,b:10},
+  {ime:'Podloga 20x15',n:200,p:600,k:0,pa:35,b:10},
+  {ime:'Podmetač fi10',n:30,p:150,k:0,pa:17.5,b:5},
+];
+
+let BASE=[...BASE_DEF];
+let lager={},prodaje=[],nabavke=[],priceHistory={};
+
+function initBase(){
+  BASE.forEach(p=>{
+    if(lager[p.ime]===undefined)lager[p.ime]=0;
+    if(!priceHistory[p.ime])priceHistory[p.ime]=[{dato:'2000-01-01',prod:p.p,nab:p.n}];
+  });
+}
+initBase();
+
+function setSyncBadge(state,text){
+  const b=document.getElementById('sync-badge');
+  const t=document.getElementById('sync-txt');
+  b.className='sync-badge sync-'+state;
+  t.textContent=text;
+}
+
+async function loadFromCloud(){
+  setSyncBadge('loading','Učitavanje...');
+  try{
+    const r=await fetch(GS_URL,{method:'GET'});
+    const d=await r.json();
+    if(d.ok&&d.data){
+      const data=d.data;
+      BASE=[...BASE_DEF];
+      lager={};prodaje=[];nabavke=[];priceHistory={};
+      if(data.extraArtikli)data.extraArtikli.forEach(a=>{if(!BASE.find(b=>b.ime===a.ime))BASE.push(a);});
+      if(data.lager)Object.assign(lager,data.lager);
+      if(data.prodaje)prodaje=data.prodaje;
+      if(data.nabavke)nabavke=data.nabavke;
+      if(data.priceHistory)Object.assign(priceHistory,data.priceHistory);
+      initBase();
+      setSyncBadge('ok','Sinhronizovano ✓');
+    }else{
+      initBase();
+      setSyncBadge('ok','Novi podaci');
+    }
+  }catch(e){
+    setSyncBadge('err','Nema konekcije');
+  }
+  refreshCurrentPage();
+}
+
+async function saveToCloud(){
+  setSyncBadge('saving','Čuvanje...');
+  try{
+    const payload={
+      lager,prodaje,nabavke,priceHistory,
+      extraArtikli:BASE.filter(b=>!BASE_DEF.find(d=>d.ime===b.ime))
+    };
+    const r=await fetch(GS_URL,{method:'POST',body:JSON.stringify(payload)});
+    const d=await r.json();
+    if(d.ok){setSyncBadge('ok','Sačuvano ✓');}
+    else{setSyncBadge('err','Greška!');}
+  }catch(e){
+    setSyncBadge('err','Greška pri čuvanju');
+  }
+}
+
+let saveTimer=null;
+function markDirty(){
+  setSyncBadge('saving','Čuvanje...');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveToCloud,1200);
+}
+
+function syncNow(){loadFromCloud();}
+
+function refreshCurrentPage(){
+  const cur=document.getElementById('pg-t').textContent;
+  const map={
+    'Nova prodaja':initProd,'Pregled':rDash,'Lager':rLager,
+    'Nabavka':rNab,'Istorija prodaje':rIst,'Analitika':rAnalitika,
+    'Dodaj artikal':rArtikli,'Upravljanje cenama':rCene,'Cenovnik':rCenovnik
+  };
+  if(map[cur])map[cur]();else initProd();
+}
+
+const fmt=n=>Math.round(n).toLocaleString('sr-RS')+' din';
+const fmtN=n=>Math.round(n).toLocaleString('sr-RS');
+const today=()=>new Date().toISOString().split('T')[0];
+document.getElementById('tdate').textContent=new Date().toLocaleDateString('sr-RS',{day:'numeric',month:'short',year:'numeric'});
+
+function getPriceAt(ime,dato){
+  const hist=(priceHistory[ime]||[]).filter(h=>h.dato<=dato).sort((a,b)=>b.dato.localeCompare(a.dato));
+  if(hist.length)return{prod:hist[0].prod,nab:hist[0].nab};
+  const b=BASE.find(x=>x.ime===ime);return{prod:b?b.p:0,nab:b?b.n:0};
+}
+function getCurPrice(ime){return getPriceAt(ime,today());}
+function calcZaradaItem(ime,kol,dato){
+  const pr=BASE.find(x=>x.ime===ime);if(!pr)return 0;
+  const cp=getPriceAt(ime,dato);
+  return Math.round((cp.prod-cp.nab-pr.k-pr.pa-pr.b)*kol);
+}
+function isNaplacena(p){return p.status==='Uplaćeno'||p.status==='Primljeno';}
+
+const PAL=['#2563eb','#10b981','#0284c7','#ca8a04','#f43f5e','#7c3aed','#0d9488','#be185d','#0891b2','#15803d'];
+const pagesMeta={
+  prodaja:['Nova prodaja','Evidentiraj novu prodaju'],
+  dashboard:['Pregled','Ukupan pregled poslovanja'],
+  lager:['Lager','Stanje zaliha'],
+  nabavka:['Nabavka','Dodaj robu na lager'],
+  istorija:['Istorija prodaje','Sve evidentirane prodaje'],
+  analitika:['Analitika','Rang lista i analiza prihoda'],
+  artikli:['Dodaj artikal','Dodaj novi artikal u sistem'],
+  cene:['Upravljanje cenama','Promena cena sa istorijom'],
+  cenovnik:['Cenovnik','Aktuelne cene i marže'],
+};
+
+let charts={};
+function go(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.na').forEach(a=>a.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(el)el.classList.add('on');
+  document.getElementById('pg-t').textContent=pagesMeta[id][0];
+  document.getElementById('pg-s').textContent=pagesMeta[id][1];
+  ({prodaja:initProd,dashboard:rDash,lager:rLager,nabavka:rNab,istorija:rIst,analitika:rAnalitika,artikli:rArtikli,cene:rCene,cenovnik:rCenovnik}[id]||function(){})();
+}
+
+function mc(cls,icon,lbl,val,sub){
+  return`<div class="mc ${cls}"><div class="mc-icon"><i class="ti ti-${icon}"></i></div><div class="mc-lbl">${lbl}</div><div class="mc-val">${val}</div><div class="mc-sub">${sub}</div></div>`;
+}
+
+function promeniStatus(idx,s){
+  prodaje[idx].status=s;markDirty();
+  const cur=document.getElementById('pg-t').textContent;
+  if(cur==='Pregled')rDash();else if(cur==='Istorija prodaje')rIst();
+}
+
+function openEdit(idx){
+  const p=prodaje[idx];
+  const wrap=document.getElementById('ist-edit-wrap');
+  wrap.innerHTML=`<div class="edit-modal">
+    <div style="font-size:13px;font-weight:500;color:#1e3a5f;display:flex;align-items:center;gap:7px;margin-bottom:12px"><i class="ti ti-edit" style="color:#3b82f6"></i> Uredi — ${p.ime} (${p.dato})</div>
+    <div class="form-row" style="margin-bottom:12px">
+      <div class="fg"><label>Datum</label><input type="date" id="ed-d" value="${p.dato}"></div>
+      <div class="fg"><label>Kupac</label><input type="text" id="ed-i" value="${p.ime}"></div>
+      <div class="fg"><label>Mesto</label><input type="text" id="ed-m" value="${p.mesto}"></div>
+      <div class="fg"><label>Dostava</label><select id="ed-dost">${['BEX','Pošta Srbije','D Express','DHL','Lično','Ostalo'].map(x=>`<option${x===p.dostava?' selected':''}>${x}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-row" style="margin-bottom:12px">
+      <div class="fg"><label>Popust (%)</label><input type="number" id="ed-pop" value="${p.pop||0}"></div>
+      <div class="fg"><label>Trošak slanja</label><input type="number" id="ed-post" value="${p.postarina||0}"></div>
+      <div class="fg"><label>Ostali rashodi</label><input type="number" id="ed-rash" value="${p.rashod||0}"></div>
+      <div class="fg"><label>Status</label><select id="ed-stat">${['Poslato','Primljeno','Uplaćeno'].map(x=>`<option${x===p.status?' selected':''}>${x}</option>`).join('')}</select></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-p" onclick="saveEdit(${idx})"><i class="ti ti-check"></i> Sačuvaj</button>
+      <button class="btn" onclick="cancelEdit()"><i class="ti ti-x"></i> Otkaži</button>
+    </div>
+  </div>`;
+  wrap.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function saveEdit(idx){
+  const p=prodaje[idx];
+  p.dato=document.getElementById('ed-d').value;
+  p.ime=document.getElementById('ed-i').value;
+  p.mesto=document.getElementById('ed-m').value;
+  p.dostava=document.getElementById('ed-dost').value;
+  p.pop=parseFloat(document.getElementById('ed-pop').value)||0;
+  p.postarina=parseFloat(document.getElementById('ed-post').value)||0;
+  p.rashod=parseFloat(document.getElementById('ed-rash').value)||0;
+  p.rashodi=(p.postarina||0)+(p.rashod||0);
+  p.status=document.getElementById('ed-stat').value;
+  cancelEdit();markDirty();rIst();
+}
+function cancelEdit(){document.getElementById('ist-edit-wrap').innerHTML='';}
+
+function delProdaja(idx){
+  if(!confirm('Obrisati prodaju? Roba se vraća na lager.'))return;
+  const p=prodaje[idx];
+  p.items.forEach(it=>{lager[it.ime]=(lager[it.ime]||0)+it.kol;});
+  prodaje.splice(idx,1);markDirty();rIst();
+}
+
+function getStats(onlyN=false){
+  const src=onlyN?prodaje.filter(isNaplacena):prodaje;const st={};
+  src.forEach(p=>{p.items.forEach(it=>{
+    if(!st[it.ime])st[it.ime]={kol:0,prihod:0,zarada:0};
+    st[it.ime].kol+=it.kol;st[it.ime].prihod+=it.cena*it.kol;
+    st[it.ime].zarada+=calcZaradaItem(it.ime,it.kol,p.dato);
+  });});
+  return st;
+}
+
+function rDash(){
+  const napl=prodaje.filter(isNaplacena);const posl=prodaje.filter(p=>p.status==='Poslato');
+  const vL=BASE.reduce((s,p)=>s+(lager[p.ime]||0)*getCurPrice(p.ime).nab,0);
+  const vP=napl.reduce((s,p)=>s+p.cena,0);
+  const tz=napl.reduce((s,p)=>s+p.items.reduce((ss,it)=>ss+calcZaradaItem(it.ime,it.kol,p.dato),0)-(p.rashodi||0),0);
+  const vC=posl.reduce((s,p)=>s+p.cena,0);
+  document.getElementById('d-mg').innerHTML=
+    mc('mc-blue','package','Vrednost lagera',fmt(vL),BASE.length+' artikala')+
+    mc('mc-mint','coin','Naplaćeno',fmt(vP),napl.length+' prodaja')+
+    mc('mc-gold','clock','Na čekanju',fmt(vC),posl.length+' poslato')+
+    mc('mc-sky','trending-up','Neto zarada',fmt(tz),'posle svih troškova');
+  document.getElementById('d-cek-badge').textContent=posl.length+' paketa';
+  const tbody=document.getElementById('d-cek-tbody');
+  if(!posl.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:#7a9cc4">Nema poslatih paketa</td></tr>';}
+  else tbody.innerHTML=posl.map(p=>{
+    const ri=prodaje.indexOf(p);const r=p.rashodi||0;
+    return`<tr><td style="color:#7a9cc4">${p.dato}</td><td class="fw">${p.ime}</td><td style="color:#7a9cc4">${p.mesto}</td><td><span class="badge b-slate">${p.dostava||'—'}</span></td><td class="r" style="color:#1e3a8a;font-weight:500">${fmt(p.cena)}</td><td class="r" style="color:#9f1239">${r>0?fmt(r):'—'}</td>
+    <td class="c" style="white-space:nowrap">
+      <button class="btn btn-g btn-sm" style="margin-right:3px" onclick="promeniStatus(${ri},'Primljeno')"><i class="ti ti-package"></i> Primljeno</button>
+      <button class="btn btn-p btn-sm" onclick="promeniStatus(${ri},'Uplaćeno')"><i class="ti ti-check"></i> Uplaćeno</button>
+    </td></tr>`;
+  }).join('');
+  document.getElementById('d-lg').innerHTML=BASE.map(p=>{
+    const k=lager[p.ime]||0;const cls=k===0?'li-zero':k<=3?'li-warn':'li-ok';
+    return`<div class="li ${cls}"><div class="li-name">${p.ime}</div><div class="li-kol">${k} <span style="font-size:11px;font-weight:400">kom</span></div><div class="li-bot"><span>${k===0?'Nema':k<=3?'Malo':'OK'}</span><span>${fmt(k*getCurPrice(p.ime).nab)}</span></div></div>`;
+  }).join('');
+  const st=getStats(true);const top5=Object.entries(st).sort((a,b)=>b[1].prihod-a[1].prihod).slice(0,5);
+  document.getElementById('d-top').innerHTML=top5.length?top5.map(([ime,s],i)=>{
+    const pct=Math.round(s.prihod/Math.max(...top5.map(x=>x[1].prihod))*100);
+    return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:12px"><span class="fw">${ime}</span><span style="color:#7a9cc4">${fmtN(s.kol)} kom · ${fmt(s.prihod)}</span></div><div style="height:5px;background:#dde6f5;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${PAL[i]};border-radius:3px"></div></div></div>`;
+  }).join(''):`<p style="color:#7a9cc4;font-size:12px;text-align:center;padding:20px">Nema naplaćenih prodaja</p>`;
+}
+
+function rLager(){
+  const total=BASE.reduce((s,p)=>s+(lager[p.ime]||0)*getCurPrice(p.ime).nab,0);
+  const zero=BASE.filter(p=>(lager[p.ime]||0)===0).length;
+  const low=BASE.filter(p=>(lager[p.ime]||0)>0&&(lager[p.ime]||0)<=3).length;
+  document.getElementById('l-mg').innerHTML=
+    mc('mc-blue','currency-dollar','Vrednost',fmt(total),BASE.length+' artikala')+
+    mc('mc-mint','circle-check','OK',(BASE.length-zero-low)+' artik.','dovoljno')+
+    mc('mc-amber','alert-circle','Malo',low+' artik.','ispod 4 kom')+
+    mc('mc-rose','ban','Nema',zero+' artik.','iscrpljeni');
+  document.getElementById('l-badge').textContent=BASE.length+' artikala';
+  document.getElementById('l-tot').textContent=fmt(total);
+  const mx=Math.max(...BASE.map(p=>lager[p.ime]||0),1);
+  document.getElementById('l-tbody').innerHTML=BASE.map(p=>{
+    const k=lager[p.ime]||0;const cp=getCurPrice(p.ime);
+    const pct=Math.round(k/mx*100);const barC=k===0?'#f43f5e':k<=3?'#f59e0b':'#10b981';
+    const badge=k===0?'<span class="badge b-red">Nema</span>':k<=3?'<span class="badge" style="background:#fef9c3;color:#854d0e">Malo</span>':'<span class="badge b-ok">OK</span>';
+    const isNov=!BASE_DEF.find(d=>d.ime===p.ime);
+    return`<tr><td class="fw">${p.ime}${isNov?' <span class="badge b-new" style="font-size:10px">Novo</span>':''}</td>
+      <td class="c"><span style="font-size:15px;font-weight:600;color:${barC}">${k}</span><div style="display:inline-block;height:5px;background:#dde6f5;border-radius:3px;width:48px;vertical-align:middle;margin-left:5px"><div style="width:${pct}%;height:100%;background:${barC};border-radius:3px"></div></div></td>
+      <td class="r" style="color:#1e3a8a">${fmt(k*cp.nab)}</td><td class="r" style="color:#7a9cc4">${fmt(cp.nab)}</td>
+      <td class="r" style="color:#064e3b">${fmt(cp.prod)}</td><td class="c">${badge}</td></tr>`;
+  }).join('');
+}
+
+function initProd(){
+  document.getElementById('p-d').value=today();
+  ['p-i','p-m'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-pop').value='0';document.getElementById('p-postarina').value='0';document.getElementById('p-rashod').value='0';
+  document.getElementById('pm').innerHTML='';document.getElementById('p-prev').style.display='none';
+  const cont=document.getElementById('p-items');cont.innerHTML='';window._ps=[];
+  for(let i=0;i<3;i++){
+    const w=document.createElement('div');w.className='pitem';
+    const sel=document.createElement('select');
+    sel.style.cssText='height:34px;padding:0 8px;border:1.5px solid #dde6f5;border-radius:10px;background:#fff;color:#1e293b;font-size:12.5px';
+    const eo=document.createElement('option');eo.value='';eo.textContent=`— Proizvod ${i+1} —`;sel.appendChild(eo);
+    BASE.filter(x=>x.p>0).forEach(p=>{const o=document.createElement('option');o.value=p.ime;const cp=getCurPrice(p.ime);o.textContent=`${p.ime} — ${fmtN(cp.prod)} din (lager: ${lager[p.ime]||0})`;sel.appendChild(o);});
+    const inp=document.createElement('input');inp.type='number';inp.min=1;inp.value=1;
+    inp.style.cssText='height:34px;text-align:right;border:1.5px solid #dde6f5;border-radius:10px;padding:0 8px;background:#fff;color:#1e293b;font-size:13px';
+    const val=document.createElement('span');val.style.cssText='font-size:13px;color:#1d4ed8;font-weight:500;text-align:right';
+    const u=()=>{const dat=document.getElementById('p-d').value||today();const cp=getPriceAt(sel.value,dat);val.textContent=sel.value&&cp.prod>0?fmt(cp.prod*(parseInt(inp.value)||0)):'';updPrev();};
+    sel.onchange=u;inp.oninput=u;inp.onchange=u;
+    w.append(sel,inp,val);cont.appendChild(w);window._ps.push({sel,inp});
+  }
+}
+
+function getItems(){
+  const dato=document.getElementById('p-d').value||today();
+  return(window._ps||[]).flatMap(({sel,inp})=>{
+    const ime=sel.value;const pr=BASE.find(x=>x.ime===ime);const kol=parseInt(inp.value)||0;
+    if(!ime||!pr||kol<=0)return[];const cp=getPriceAt(ime,dato);
+    return cp.prod>0?[{ime,kol,cena:cp.prod}]:[];
+  });
+}
+
+function updPrev(){
+  const items=getItems();const prev=document.getElementById('p-prev');
+  if(!items.length){prev.style.display='none';return;}
+  const pop=parseFloat(document.getElementById('p-pop').value)||0;
+  const post=parseFloat(document.getElementById('p-postarina').value)||0;
+  const rash=parseFloat(document.getElementById('p-rashod').value)||0;
+  const sub=items.reduce((s,it)=>s+it.cena*it.kol,0);
+  const disc=sub*pop/100;const total=sub-disc;
+  prev.style.display='block';
+  prev.innerHTML=`<div class="pbox">${items.map(it=>`<div class="pr"><span>${it.ime} ×${it.kol}</span><span>${fmt(it.cena*it.kol)}</span></div>`).join('')}${pop>0?`<div class="pr"><span style="color:#f43f5e">Popust (${pop}%)</span><span style="color:#f43f5e">-${fmt(disc)}</span></div>`:''}<div class="pt"><span>Iznos za naplatu</span><span>${fmt(total)}</span></div>${(post+rash)>0?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #bfdbfe;font-size:12px;color:#9f1239;display:flex;justify-content:space-between"><span>Rashodi</span><span>-${fmt(post+rash)}</span></div>`:''}</div>`;
+}
+
+function saveProd(forcedStatus){
+  const dato=document.getElementById('p-d').value;const ime=document.getElementById('p-i').value.trim();
+  const mesto=document.getElementById('p-m').value.trim();const pop=parseFloat(document.getElementById('p-pop').value)||0;
+  const postarina=parseFloat(document.getElementById('p-postarina').value)||0;
+  const rashod=parseFloat(document.getElementById('p-rashod').value)||0;
+  const dostava=document.getElementById('p-dostava').value;
+  const items=getItems();const msg=document.getElementById('pm');
+  if(!dato||!ime||!mesto){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Unesite datum, ime i mesto.</div>';return;}
+  if(!items.length){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Izaberite bar jedan proizvod.</div>';return;}
+  for(const it of items){if((lager[it.ime]||0)<it.kol){msg.innerHTML=`<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Nema dovoljno: <strong>${it.ime}</strong> (${lager[it.ime]||0} kom)</div>`;return;}}
+  const sub=items.reduce((s,it)=>s+it.cena*it.kol,0);
+  const cena=Math.round(sub*(1-pop/100));
+  items.forEach(it=>{lager[it.ime]=(lager[it.ime]||0)-it.kol;});
+  prodaje.push({dato,ime,mesto,pop,cena,items,status:forcedStatus,dostava,postarina,rashod,rashodi:postarina+rashod});
+  markDirty();
+  const isOk=isNaplacena({status:forcedStatus});
+  msg.innerHTML=`<div class="msg ${isOk?'msg-ok':'msg-info'}"><i class="ti ti-${isOk?'circle-check':'send'}"></i> ${isOk?'Prodaja naplaćena!':'Evidentirano kao Poslato.'} Iznos: ${fmt(cena)}</div>`;
+  setTimeout(initProd,1800);
+}
+
+function rNab(){
+  const sel=document.getElementById('n-pr');const cur=sel.value;
+  sel.innerHTML='<option value="">— Izaberi —</option>';
+  BASE.forEach(p=>{const o=document.createElement('option');o.value=p.ime;o.textContent=p.ime+((lager[p.ime]||0)>0?' ('+(lager[p.ime]||0)+' kom)':'');if(p.ime===cur)o.selected=true;sel.appendChild(o);});
+  if(!document.getElementById('n-dt').value)document.getElementById('n-dt').value=today();
+  const total=nabavke.reduce((s,n)=>s+n.ukupno,0);
+  document.getElementById('n-badge').textContent=nabavke.length+' nabavki';
+  document.getElementById('n-tot').textContent=fmt(total);
+  const tbody=document.getElementById('n-tbody');
+  if(!nabavke.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:#7a9cc4">Nema nabavki</td></tr>';return;}
+  tbody.innerHTML=[...nabavke].reverse().map((n,i)=>`<tr><td style="color:#7a9cc4">${n.dato}</td><td class="fw">${n.ime}</td><td class="r"><span class="badge b-blue">${n.kol} kom</span></td><td class="r" style="color:#7a9cc4">${fmt(n.cena)}</td><td class="r" style="color:#0c4a6e;font-weight:500">${fmt(n.ukupno)}</td><td class="c"><button class="btn btn-d" onclick="delNab(${nabavke.length-1-i})"><i class="ti ti-trash"></i></button></td></tr>`).join('');
+}
+
+function setNC(){const p=BASE.find(x=>x.ime===document.getElementById('n-pr').value);if(p){const cp=getCurPrice(p.ime);document.getElementById('n-ce').value=cp.nab;}}
+
+function saveNab(){
+  const ime=document.getElementById('n-pr').value;const kol=parseInt(document.getElementById('n-kl').value)||0;
+  const cena=parseFloat(document.getElementById('n-ce').value)||0;const dato=document.getElementById('n-dt').value;
+  const msg=document.getElementById('nm');
+  if(!ime||kol<=0||!dato){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Popunite sve podatke.</div>';return;}
+  lager[ime]=(lager[ime]||0)+kol;nabavke.push({dato,ime,kol,cena,ukupno:kol*cena});markDirty();
+  msg.innerHTML=`<div class="msg msg-ok"><i class="ti ti-circle-check"></i> Dodato ${kol} kom → ${ime}</div>`;
+  document.getElementById('n-pr').value='';document.getElementById('n-kl').value=1;document.getElementById('n-ce').value=0;
+  rNab();setTimeout(()=>msg.innerHTML='',2500);
+}
+
+function delNab(idx){
+  if(!confirm('Obrisati nabavku?'))return;
+  const n=nabavke[idx];lager[n.ime]=Math.max(0,(lager[n.ime]||0)-n.kol);nabavke.splice(idx,1);markDirty();rNab();
+}
+
+function rIst(){
+  const f=document.getElementById('ist-f').value;
+  const filtered=f?prodaje.filter(p=>p.status===f):prodaje;
+  const napl=filtered.filter(isNaplacena);
+  const tp=napl.reduce((s,p)=>s+p.cena,0);
+  const tz=napl.reduce((s,p)=>s+p.items.reduce((ss,it)=>ss+calcZaradaItem(it.ime,it.kol,p.dato),0),0);
+  const tr=filtered.reduce((s,p)=>s+(p.rashodi||0),0);
+  const cek=prodaje.filter(p=>p.status==='Poslato').length;
+  document.getElementById('ist-mg').innerHTML=
+    mc('mc-blue','coin','Naplaćeno',fmt(tp),napl.length+' prodaja')+
+    mc('mc-mint','trending-up','Zarada',fmt(tz),'neto profit')+
+    mc('mc-gold','clock','Na čekanju',cek+' paket(a)','čeka uplatu')+
+    mc('mc-rose','receipt','Rashodi',fmt(tr),'poštarina + ostalo');
+  document.getElementById('ist-badge').textContent=filtered.length+' prodaja';
+  document.getElementById('ist-prihod').textContent=fmt(tp);
+  document.getElementById('ist-zarada').textContent=fmt(tz);
+  document.getElementById('ist-rashodi').textContent=fmt(tr);
+  const tbody=document.getElementById('ist-tbody');
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:24px;color:#7a9cc4">Nema prodaja</td></tr>';return;}
+  const sMap={Poslato:'b-sent',Primljeno:'b-paid',Uplaćeno:'b-ok'};
+  tbody.innerHTML=[...prodaje].reverse().map(p=>{
+    if(f&&p.status!==f)return'';
+    const idx=prodaje.indexOf(p);const nl=isNaplacena(p);
+    const z=nl?p.items.reduce((s,it)=>s+calcZaradaItem(it.ime,it.kol,p.dato),0):0;
+    const rash=p.rashodi||0;const proiz=p.items.map(it=>`${it.ime}×${it.kol}`).join(' · ');
+    return`<tr style="${!nl?'opacity:.78':''}">
+      <td class="c"><span class="badge b-gray" style="font-size:11px">${idx+1}</span></td>
+      <td style="color:#7a9cc4">${p.dato}</td><td class="fw">${p.ime}</td>
+      <td style="color:#7a9cc4">${p.mesto}</td><td><span class="badge b-slate" style="font-size:10.5px">${p.dostava||'—'}</span></td>
+      <td style="font-size:11.5px;color:#7a9cc4">${proiz}</td>
+      <td class="r" style="color:${nl?'#1e3a8a':'#9ca3af'};font-weight:${nl?'500':'400'}">${fmt(p.cena)}</td>
+      <td class="r" style="color:#9f1239">${rash>0?fmt(rash):'—'}</td>
+      <td class="r" style="color:${nl?'#064e3b':'#9ca3af'};font-weight:${nl?'500':'400'}">${nl?fmt(z):'—'}</td>
+      <td class="c" style="white-space:nowrap">
+        <span class="badge ${sMap[p.status]||'b-gray'}" style="margin-bottom:3px;display:block;text-align:center">${p.status}</span>
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:2px">
+          ${p.status==='Poslato'?`<button class="btn btn-g btn-sm" onclick="promeniStatus(${idx},'Primljeno')" title="Primljeno"><i class="ti ti-package"></i></button><button class="btn btn-p btn-sm" onclick="promeniStatus(${idx},'Uplaćeno')" title="Uplaćeno"><i class="ti ti-check"></i></button>`:''}
+          <button class="btn btn-sm" style="background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8" onclick="openEdit(${idx})"><i class="ti ti-edit"></i></button>
+          <button class="btn btn-d btn-sm" onclick="delProdaja(${idx})"><i class="ti ti-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function rAnalitika(){
+  const napl=prodaje.filter(isNaplacena);const st=getStats(true);
+  const tp=napl.reduce((s,p)=>s+p.cena,0);
+  const tz=napl.reduce((s,p)=>s+p.items.reduce((ss,it)=>ss+calcZaradaItem(it.ime,it.kol,p.dato),0),0);
+  const tk=Object.values(st).reduce((s,v)=>s+v.kol,0);
+  document.getElementById('an-mg').innerHTML=
+    mc('mc-blue','coin','Ukupan prihod',fmt(tp),napl.length+' naplaćenih')+
+    mc('mc-mint','trending-up','Ukupna zarada',fmt(tz),'posle troškova')+
+    mc('mc-sky','package','Prodato',fmtN(tk)+' kom','ukupno')+
+    mc('mc-rose','percent','Marža',tp>0?Math.round(tz/tp*100)+'%':'0%','zarada/prihod');
+  const sorted=Object.entries(st).sort((a,b)=>b[1].kol-a[1].kol);
+  const maxK=sorted.length?Math.max(...sorted.map(x=>x[1].kol),1):1;
+  const rk=i=>i===0?'rk1':i===1?'rk2':i===2?'rk3':'rkn';
+  document.getElementById('an-rang').innerHTML=sorted.length?sorted.map(([ime,s],i)=>{
+    const pct=Math.round(s.kol/maxK*100);
+    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${i<3?['#fef9c3','#f1f5f9','#fff7ed'][i]:'#f8faff'};border-radius:12px;border:1.5px solid ${i<3?['#fde047','#d1d5db','#fdba74'][i]:'#dde6f5'}">
+      <span class="${rk(i)}">${i+1}</span>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ime}</div>
+      <div style="height:5px;background:#dde6f5;border-radius:3px;overflow:hidden;margin-top:4px"><div style="width:${pct}%;height:100%;background:${PAL[i%PAL.length]};border-radius:3px"></div></div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:600;color:${PAL[i%PAL.length]}">${fmtN(s.kol)} kom</div><div style="font-size:11px;color:#7a9cc4">${fmt(s.prihod)}</div></div>
+    </div>`;
+  }).join(''):`<p style="color:#7a9cc4;text-align:center;padding:20px;font-size:12px">Nema naplaćenih prodaja</p>`;
+  const top8=sorted.slice(0,8);
+  document.getElementById('an-legend').innerHTML=top8.map(([ime],i)=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:2px;background:${PAL[i]};flex-shrink:0"></span>${ime}</span>`).join('');
+  if(charts.pie){charts.pie.destroy();charts.pie=null;}
+  if(top8.length)charts.pie=new Chart(document.getElementById('an-pie'),{type:'doughnut',data:{labels:top8.map(x=>x[0]),datasets:[{data:top8.map(x=>x[1].kol),backgroundColor:PAL.slice(0,top8.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw} kom`}}}}});
+  document.getElementById('an-tot-p').textContent=fmt(tp);document.getElementById('an-tot-z').textContent=fmt(tz);
+  const maxP=sorted.length?Math.max(...sorted.map(x=>x[1].prihod),1):1;
+  document.getElementById('an-tbody').innerHTML=sorted.length?sorted.map(([ime,s],i)=>{
+    const pr=BASE.find(x=>x.ime===ime);
+    const nabT=pr?napl.filter(p=>p.items.some(it=>it.ime===ime)).reduce((acc,p)=>{const it=p.items.find(x=>x.ime===ime);if(!it)return acc;return acc+getPriceAt(ime,p.dato).nab*it.kol;},0):0;
+    const pakT=pr?(pr.k+pr.pa+pr.b)*s.kol:0;
+    const mz=s.prihod>0?Math.round(s.zarada/s.prihod*100):0;
+    const pct=Math.round(s.prihod/maxP*100);
+    return`<tr><td class="c"><span class="${rk(i)}">${i+1}</span></td><td class="fw">${ime}</td><td class="r"><span class="badge b-blue">${fmtN(s.kol)}</span></td><td class="r" style="color:#1e3a8a;font-weight:500">${fmt(s.prihod)}</td><td class="r" style="color:#7a9cc4">${fmt(nabT)}</td><td class="r" style="color:#7a9cc4">${fmt(pakT)}</td><td class="r" style="color:#064e3b;font-weight:500">${fmt(s.zarada)}</td><td class="r"><span class="badge ${mz>60?'b-ok':mz>30?'b-sent':'b-red'}">${mz}%</span></td><td class="c"><div style="display:inline-block;height:6px;background:#dde6f5;border-radius:3px;width:60px;vertical-align:middle"><div style="width:${pct}%;height:100%;background:${PAL[i%PAL.length]};border-radius:3px"></div></div></td></tr>`;
+  }).join(''):'<tr><td colspan="9" style="text-align:center;padding:24px;color:#7a9cc4">Nema naplaćenih prodaja</td></tr>';
+  const km={};napl.forEach(p=>{if(!km[p.ime])km[p.ime]={mesto:p.mesto,br:0,ukupno:0};km[p.ime].br++;km[p.ime].ukupno+=p.cena;});
+  const kupci=Object.entries(km).sort((a,b)=>b[1].ukupno-a[1].ukupno).slice(0,8);
+  document.getElementById('an-kupci').innerHTML=kupci.length?kupci.map(([n,k],i)=>`<tr><td class="c"><span class="${rk(i)}">${i+1}</span></td><td class="fw">${n}</td><td style="color:#7a9cc4">${k.mesto}</td><td class="r"><span class="badge b-blue">${k.br}×</span></td><td class="r" style="color:#064e3b;font-weight:500">${fmt(k.ukupno)}</td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:#7a9cc4">Nema podataka</td></tr>';
+  const mm={};const totM=napl.reduce((s,p)=>s+p.cena,0)||1;
+  napl.forEach(p=>{if(!mm[p.mesto])mm[p.mesto]={br:0,ukupno:0};mm[p.mesto].br++;mm[p.mesto].ukupno+=p.cena;});
+  const mesta=Object.entries(mm).sort((a,b)=>b[1].ukupno-a[1].ukupno).slice(0,8);
+  document.getElementById('an-mesta').innerHTML=mesta.length?mesta.map(([m,v],i)=>`<tr><td class="c"><span class="${rk(i)}">${i+1}</span></td><td class="fw">${m}</td><td class="r"><span class="badge b-blue">${v.br}×</span></td><td class="r" style="color:#064e3b;font-weight:500">${fmt(v.ukupno)}</td><td class="r"><span class="badge b-gray">${Math.round(v.ukupno/totM*100)}%</span></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;padding:20px;color:#7a9cc4">Nema podataka</td></tr>';
+  const dm={};napl.forEach(p=>{if(!dm[p.dato])dm[p.dato]=0;dm[p.dato]+=p.cena;});
+  const dates=Object.keys(dm).sort().slice(-14);
+  if(charts.bar){charts.bar.destroy();charts.bar=null;}
+  if(dates.length)charts.bar=new Chart(document.getElementById('an-bar'),{type:'bar',data:{labels:dates,datasets:[{label:'Prihod',data:dates.map(d=>dm[d]),backgroundColor:'#93c5fd',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}},scales:{x:{ticks:{color:'#7a9cc4',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#7a9cc4',font:{size:10},callback:v=>fmtN(v)},grid:{color:'#eef2fb'}}}}});
+}
+
+function dodajArtikal(){
+  const ime=document.getElementById('art-ime').value.trim();
+  const nab=parseFloat(document.getElementById('art-nab').value)||0;
+  const prod=parseFloat(document.getElementById('art-prod').value)||0;
+  const k=parseFloat(document.getElementById('art-kutija').value)||0;
+  const pa=parseFloat(document.getElementById('art-papir').value)||0;
+  const b=parseFloat(document.getElementById('art-boja').value)||0;
+  const msg=document.getElementById('art-msg');
+  if(!ime){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Unesite naziv.</div>';return;}
+  if(nab<=0||prod<=0){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Cene moraju biti veće od 0.</div>';return;}
+  if(BASE.find(x=>x.ime.toLowerCase()===ime.toLowerCase())){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Artikal već postoji.</div>';return;}
+  BASE.push({ime,n:nab,p:prod,k,pa,b,nov:true});
+  lager[ime]=0;priceHistory[ime]=[{dato:'2000-01-01',prod,nab}];markDirty();
+  msg.innerHTML=`<div class="msg msg-ok"><i class="ti ti-circle-check"></i> <strong>${ime}</strong> dodat!</div>`;
+  ['art-ime','art-nab','art-prod'].forEach(id=>document.getElementById(id).value='');
+  ['art-kutija','art-papir','art-boja'].forEach(id=>document.getElementById(id).value='0');
+  rArtikli();setTimeout(()=>msg.innerHTML='',4000);
+}
+
+function rArtikli(){
+  document.getElementById('art-count').textContent=BASE.length+' artikala';
+  document.getElementById('art-tbody').innerHTML=BASE.map(p=>{
+    const cp=getCurPrice(p.ime);const profit=cp.prod-cp.nab-p.k-p.pa-p.b;
+    const isNov=!BASE_DEF.find(d=>d.ime===p.ime);
+    return`<tr><td class="fw">${p.ime}${isNov?' <span class="badge b-new" style="font-size:10px">Novo</span>':''}</td><td class="r" style="color:#9f1239">${fmtN(cp.nab)}</td><td class="r" style="color:#064e3b;font-weight:500">${fmtN(cp.prod)}</td><td class="r" style="color:#7a9cc4">${p.k>0?fmtN(p.k):'—'}</td><td class="r" style="color:#7a9cc4">${p.pa>0?fmtN(p.pa):'—'}</td><td class="r" style="color:#7a9cc4">${p.b>0?fmtN(p.b):'—'}</td><td class="r" style="color:#1e3a8a;font-weight:500">${fmtN(profit)}</td><td class="c" style="font-weight:600;color:${(lager[p.ime]||0)===0?'#f43f5e':(lager[p.ime]||0)<=3?'#f59e0b':'#10b981'}">${lager[p.ime]||0}</td></tr>`;
+  }).join('');
+}
+
+function rCene(){
+  const sel=document.getElementById('ce-pr');const cur=sel.value;
+  sel.innerHTML='<option value="">— Izaberi —</option>';
+  BASE.forEach(p=>{const o=document.createElement('option');o.value=p.ime;o.textContent=p.ime;if(p.ime===cur)o.selected=true;sel.appendChild(o);});
+  if(!document.getElementById('ce-dt').value)document.getElementById('ce-dt').value=today();
+  rCeneAll();if(cur)loadCeneHist();
+}
+
+function loadCeneHist(){
+  const ime=document.getElementById('ce-pr').value;
+  if(!ime){document.getElementById('ce-hist-card').style.display='none';document.getElementById('ce-current').style.display='none';return;}
+  const cp=getCurPrice(ime);
+  document.getElementById('ce-current').style.display='block';
+  document.getElementById('ce-current').innerHTML=`<div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:11px 14px;display:flex;gap:24px;font-size:12.5px;color:#1d4ed8"><span>Prod: <strong>${fmt(cp.prod)}</strong></span><span>Nab: <strong>${fmt(cp.nab)}</strong></span></div>`;
+  document.getElementById('ce-prod').value=cp.prod;document.getElementById('ce-nab').value=cp.nab;
+  const hist=(priceHistory[ime]||[]).sort((a,b)=>b.dato.localeCompare(a.dato));
+  document.getElementById('ce-hist-card').style.display='block';
+  document.getElementById('ce-hist-title').textContent=ime;
+  document.getElementById('ce-hist').innerHTML=hist.map((h,i)=>
+    `<div class="price-hist-row ${i===0?'current':''}">
+      <div><span style="font-weight:500">Prod: ${fmt(h.prod)} · Nab: ${fmt(h.nab)}</span><div style="font-size:11px;color:#7a9cc4">Od: ${h.dato==='2000-01-01'?'Početna':h.dato}</div></div>
+      <div style="display:flex;align-items:center;gap:6px">${i===0?'<span class="badge b-ok">Aktuelna</span>':''}${h.dato!=='2000-01-01'?`<button class="btn btn-d" onclick="delCena('${ime}','${h.dato}')"><i class="ti ti-trash"></i></button>`:''}</div>
+    </div>`).join('');
+}
+
+function saveCena(){
+  const ime=document.getElementById('ce-pr').value;const dato=document.getElementById('ce-dt').value;
+  const prodV=document.getElementById('ce-prod').value;const nabV=document.getElementById('ce-nab').value;
+  const msg=document.getElementById('cene-msg');
+  if(!ime||!dato){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Izaberite proizvod i datum.</div>';return;}
+  if(!prodV&&!nabV){msg.innerHTML='<div class="msg msg-err"><i class="ti ti-alert-circle"></i> Unesite bar jednu cenu.</div>';return;}
+  if(!priceHistory[ime])priceHistory[ime]=[];
+  const cp=getCurPrice(ime);
+  const newProd=prodV?parseFloat(prodV):cp.prod;const newNab=nabV?parseFloat(nabV):cp.nab;
+  const ei=priceHistory[ime].findIndex(h=>h.dato===dato);
+  if(ei>=0)priceHistory[ime][ei]={dato,prod:newProd,nab:newNab};else priceHistory[ime].push({dato,prod:newProd,nab:newNab});
+  markDirty();
+  msg.innerHTML=`<div class="msg msg-ok"><i class="ti ti-circle-check"></i> Cena sačuvana za <strong>${ime}</strong> od ${dato}.</div>`;
+  loadCeneHist();rCeneAll();setTimeout(()=>msg.innerHTML='',3000);
+}
+
+function delCena(ime,dato){
+  if(!confirm('Obrisati ovu cenu?'))return;
+  priceHistory[ime]=priceHistory[ime].filter(h=>h.dato!==dato);markDirty();loadCeneHist();rCeneAll();
+}
+
+function rCeneAll(){
+  const all=[];
+  Object.entries(priceHistory).forEach(([ime,hist])=>{hist.filter(h=>h.dato!=='2000-01-01').forEach(h=>all.push({...h,ime}));});
+  all.sort((a,b)=>b.dato.localeCompare(a.dato));
+  const tbody=document.getElementById('ce-all-tbody');
+  if(!all.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#7a9cc4">Nema promena cena</td></tr>';return;}
+  tbody.innerHTML=all.map(c=>`<tr><td>${c.dato}</td><td class="fw">${c.ime}</td><td class="r" style="color:#064e3b;font-weight:500">${fmt(c.prod)}</td><td class="r" style="color:#7a9cc4">${fmt(c.nab)}</td><td class="c"><button class="btn btn-d" onclick="delCena('${c.ime}','${c.dato}')"><i class="ti ti-trash"></i></button></td></tr>`).join('');
+}
+
+function rCenovnik(){
+  document.getElementById('cn-tbody').innerHTML=BASE.filter(p=>p.p>0).map(p=>{
+    const cp=getCurPrice(p.ime);const trosak=p.k+p.pa+p.b;
+    const profit=cp.prod-cp.nab-trosak;const marza=Math.round(profit/cp.nab*100);
+    const changed=(priceHistory[p.ime]||[]).filter(h=>h.dato!=='2000-01-01').length>0;
+    const isNov=!BASE_DEF.find(d=>d.ime===p.ime);
+    return`<tr><td class="fw">${p.ime}${isNov?' <span class="badge b-new" style="font-size:10px">Novo</span>':''}${changed?' <span class="badge b-changed">Izmenjeno</span>':''}</td><td class="r" style="color:#9f1239">${fmtN(cp.nab)}</td><td class="r" style="color:#064e3b;font-weight:500">${fmtN(cp.prod)}</td><td class="r" style="color:#7a9cc4">${p.k>0?fmtN(p.k):'—'}</td><td class="r" style="color:#7a9cc4">${p.pa>0?fmtN(p.pa):'—'}</td><td class="r" style="color:#7a9cc4">${p.b>0?fmtN(p.b):'—'}</td><td class="r" style="color:#1e3a8a;font-weight:500">${fmtN(profit)}</td><td class="r"><span class="badge ${marza>200?'b-ok':marza>100?'b-sent':'b-red'}">${marza}%</span></td><td class="c" style="font-weight:600;color:${(lager[p.ime]||0)===0?'#f43f5e':(lager[p.ime]||0)<=3?'#f59e0b':'#10b981'}">${lager[p.ime]||0}</td></tr>`;
+  }).join('');
+}
+
+loadFromCloud();
+</script>
+</body>
+</html>
